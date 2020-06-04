@@ -1,0 +1,73 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: color-is-gw
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: color-service
+  labels:
+    app: color
+spec:
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8080 #Port in containers
+  selector:
+    app: color    
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: color-is-dr
+spec:
+  host: color-service
+  subsets:
+  - name: blue-sub
+    labels:
+      color: blue
+  - name: green-sub
+    labels:
+      color: green
+
+---   
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: color-is-vs-cookie
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - color-is-gw
+  http:
+  - match:
+    - uri:
+        prefix: /cookie
+      headers:
+        cookie:
+          regex: ^(.\*?;)?(my-color=green)(;.\*)?$
+    route:
+    - destination:
+        host: color-service #Name of the service
+        subset: green-sub
+  - match:
+    - uri:
+        prefix: /cookie
+    route:
+    - destination: #Default (if match is false)
+        host: color-service #Name of the service
+        subset: blue-sub

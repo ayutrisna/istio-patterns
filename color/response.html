@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+    <title>{{.Title}}</title>
+<style>
+		body {
+			margin: 0;
+			font-family: "Open Sans", sans-serif;
+		}
+        .box {
+            width: 500px;
+            padding: 10px;    
+            background-color: {{.Color}};
+            word-wrap:  break-word;          
+        }
+
+</style>
+</head>
+<body>
+    <div class="box">
+        <h1>{{.Title}}</h1>
+        <p>Hostname: <b>{{.HostName}}</b></p>        
+        <p>Request:<br/> {{.Request}}</p>
+    </div>
+</body>
+
+
+    

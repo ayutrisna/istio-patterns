@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-color-green
+  labels: #Labels for de deployment app: color and color: blue
+    app: color 
+    color: green
+spec:
+  selector:
+    matchLabels:  #Deploy in a POD that has labels app: color and color: blue
+      app: color
+      color: green
+  replicas: 1
+  template: #For the creation of the pod
+    metadata:
+      labels: #Tag the POD with labels app: color and color: blue
+        app: color  
+        color: green
+    spec:
+      containers:
+        - name: color-green
+          image: itwonderlab/color
+          env:
+          - name: COLOR
+            value: "green"          
+          ports:
+            - name: http2-web
+              containerPort: 8080
